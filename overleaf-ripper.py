@@ -1,5 +1,4 @@
 from dotenv import load_dotenv
-from auther import Auther
 from ripper import Ripper
 import os
 
@@ -9,9 +8,8 @@ url = os.getenv("BASEURL")
 projectId = os.getenv("PROJECTID")
 email = os.getenv("EMAIL")
 password = os.getenv("PASSWORD")
+downloadPath = os.getenv("DOWNLOADPATH")
 
-A = Auther(url)
-cookies = A.login(email, password)
 
-JohnThe = Ripper(url, projectId, cookies)
-JohnThe.ripSel()
+JohnThe = Ripper(url, projectId)
+JohnThe.ripSel(email, password, downloadPath)
