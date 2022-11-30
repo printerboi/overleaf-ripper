@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service as FirefoxService
 from webdriver_manager.firefox import GeckoDriverManager
 from time import sleep
-
+import pathlib
 
 
 
@@ -22,16 +22,13 @@ class Ripper:
 
 
     def ripSel(self, email, password, downloadPath) -> None:
-        if(not os.path.isdir("files")):
-            os.mkdir("files")
-
         service = FirefoxService(executable_path=GeckoDriverManager().install())
         profile = webdriver.FirefoxProfile()
         options = webdriver.FirefoxOptions()
         options.add_argument("--headless")
         profile.set_preference("browser.download.folderList", 2)
         profile.set_preference("browser.download.manager.showWhenStarting", False)
-        profile.set_preference("browser.download.dir", downloadPath)
+        profile.set_preference("browser.download.dir", "/ripper/files")
         profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-gzip")
         driver = webdriver.Firefox(service=service, firefox_profile=profile, options=options)
         driver.get("{}".format(self.url))
@@ -50,11 +47,15 @@ class Ripper:
         sleep(3)
         
         driver.get("{}/project/{}".format(self.url, self.project))
+        sleep(5)
         
-        compileLabels = driver.find_elements_by_class_name("btn-recompile-label")
+        compileLabels = driver.find_elements(By.CSS_SELECTOR, ".btn-recompile-label")
         
-        while self.isCompiling(compileLabels):
-            sleep(1)
+        compiling = self.isCompiling(compileLabels)
+        while compiling:
+            compiling = self.isCompiling(compileLabels)
+            print("Compiling {}".format(compiling))
+            sleep(3)
 
 
         projectnameContainer = driver.find_element(By.CSS_SELECTOR, '.name');
@@ -70,16 +71,21 @@ class Ripper:
 
 
     def isCompiling(self, elements) -> bool:
-        if(elements[0].is_displayed()):
+        if(elements[0].is_displayed() ):
             return False
         else:
             return True
+            
 
     def handleSaving(self, filename) -> None:
-        while not os.path.exists("files/{}".format(filename)):
+        print(filename)
+        while not os.path.exists("./files/{}".format(filename)):
+            print(os.path.exists("./files/{}".format(filename)))
             sleep(15)
 
-        if os.path.isfile("files/{}".format(filename)):
-            if os.path.isfile("files/{}".format("output.pdf")):
-                os.remove("files/{}".format("output.pdf"))
-            os.rename("files/{}".format(filename), "files/{}".format("output.pdf"))
+        if os.path.isfile("./files/{}".format(filename)):
+            if os.path.isfile("./files/{}".format("output.pdf")):
+                os.remove("./files/{}".format("output.pdf"))
+            
+            print("Renaming......")
+            os.rename("./files/{}".format(filename), "./files/{}".format("output.pdf"))
