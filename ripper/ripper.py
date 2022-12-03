@@ -8,9 +8,6 @@ from time import sleep
 import pathlib
 
 
-
-
-
 class Ripper:
     url = ""
     project = ""
@@ -28,9 +25,11 @@ class Ripper:
         options.add_argument("--headless")
         profile.set_preference("browser.download.folderList", 2)
         profile.set_preference("browser.download.manager.showWhenStarting", False)
-        profile.set_preference("browser.download.dir", "/ripper/files")
-        profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-gzip")
+        profile.set_preference("browser.download.dir", downloadPath)
+        profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/pdf")
+        profile.set_preference("pdfjs.disabled", True)
         driver = webdriver.Firefox(service=service, firefox_profile=profile, options=options)
+        print("======> {}".format(self.url))
         driver.get("{}".format(self.url))
 
         nameInput = driver.find_element(By.NAME, "email")
@@ -44,12 +43,16 @@ class Ripper:
         loginForm = driver.find_element(By.NAME, "loginForm")
         loginForm.submit()
 
+        #TODO: Check if the login was successfull by parsing the seen content
         sleep(3)
         
         driver.get("{}/project/{}".format(self.url, self.project))
         sleep(5)
         
         compileLabels = driver.find_elements(By.CSS_SELECTOR, ".btn-recompile-label")
+
+
+        print(compileLabels)
         
         compiling = self.isCompiling(compileLabels)
         while compiling:
