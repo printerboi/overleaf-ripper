@@ -1,10 +1,6 @@
 # action.yml
 name: 'overleag-ripper'
 description: 'Ripps a PDF from a custom overleaf-instance'
-inputs:
-outputs:
-  pdf: # id of output
-    description: 'The ripped pdf'
 runs:
   using: 'docker'
   image: 'Dockerfile'
