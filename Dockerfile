@@ -10,5 +10,3 @@ WORKDIR "/ripper"
 RUN "ls"
 
 RUN pip install -r requirements.txt
-
-ENTRYPOINT ["python", "overleaf-ripper.py"]
