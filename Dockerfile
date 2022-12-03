@@ -6,7 +6,9 @@ RUN pip3 install --no-cache --upgrade pip setuptools
 RUN apk --no-cache add firefox
 
 COPY ripper/ ripper
+WORKDIR "/ripper"
+RUN "ls"
 
 RUN pip install -r requirements.txt
 
-ENTRYPOINT ["python", "./ripper/overleaf-ripper.py"]
+ENTRYPOINT ["python", "overleaf-ripper.py"]
