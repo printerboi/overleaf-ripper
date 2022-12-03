@@ -8,5 +8,3 @@ outputs:
 runs:
   using: 'docker'
   image: 'Dockerfile'
-  volumes: 
-    - ${{ github.workspace }}/ripper/files:/ripper/files
