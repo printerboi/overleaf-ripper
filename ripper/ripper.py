@@ -45,30 +45,35 @@ class Ripper:
 
         #TODO: Check if the login was successfull by parsing the seen content
         sleep(3)
-        
-        driver.get("{}/project/{}".format(self.url, self.project))
-        sleep(5)
-        
-        compileLabels = driver.find_elements(By.CSS_SELECTOR, ".btn-recompile-label")
 
+        fail = driver.find_element(By.CSS_SELECTOR, ".alert-danger")
 
-        print(compileLabels)
         
-        compiling = self.isCompiling(compileLabels)
-        while compiling:
+        if(fail == None):
+            driver.get("{}/project/{}".format(self.url, self.project))
+            #sleep(5)
+            
+            compileLabels = driver.find_elements(By.CSS_SELECTOR, ".btn-recompile-label")
+
+            print(compileLabels)
+            
             compiling = self.isCompiling(compileLabels)
-            print("Compiling {}".format(compiling))
-            sleep(3)
+            while compiling:
+                compiling = self.isCompiling(compileLabels)
+                print("Compiling {}".format(compiling))
+                sleep(3)
 
 
-        projectnameContainer = driver.find_element(By.CSS_SELECTOR, '.name');
-        projectName = projectnameContainer.text.replace(" ", "_")
+            projectnameContainer = driver.find_element(By.CSS_SELECTOR, '.name');
+            projectName = projectnameContainer.text.replace(" ", "_")
 
-        projectLink = driver.find_element(By.CSS_SELECTOR, 'a[tooltip="Download PDF"]'.format(self.project))
-        projectLink.click()
-        
-        filename = "{}.pdf".format(projectName)
-        self.handleSaving(filename)
+            projectLink = driver.find_element(By.CSS_SELECTOR, 'a[tooltip="Download PDF"]'.format(self.project))
+            projectLink.click()
+            
+            filename = "{}.pdf".format(projectName)
+            self.handleSaving(filename)
+        else:
+            raise ValueError("Wrong username or password provided. Check your credentials")
 
         driver.quit()
 
@@ -83,8 +88,8 @@ class Ripper:
     def handleSaving(self, filename) -> None:
         print(filename)
         while not os.path.exists("./files/{}".format(filename)):
-            print(os.path.exists("./files/{}".format(filename)))
-            sleep(15)
+            print("Waiting for the file to finish downloading...")
+            sleep(3)
 
         if os.path.isfile("./files/{}".format(filename)):
             if os.path.isfile("./files/{}".format("output.pdf")):
